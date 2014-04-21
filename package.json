@@ -1,8 +1,8 @@
 {
-  "name": "project-name",
+  "name": "smoking-carrots",
   "version": "0.1.0",
   "author": "Gonzalo Vazquez",
-  "description": "A boilerplate for creating web-apps",
+  "description": "A 2-d game about a rabbit surviving a zombie apocalypse",
   "contributors": [
     {
       "name": "Gonzalo Vazquez",
@@ -11,7 +11,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/gonzalovazquez/boilerplate.git"
+    "url": "https://github.com/gonzalovazquez/smoking-carrots.git"
   },
   "devDependencies": {
     "gulp": "^3.6.1",

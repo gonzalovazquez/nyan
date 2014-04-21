@@ -1,6 +1,5 @@
 GV Boilerplate
 ===
-
 A boilerplate for creating web-apps.
 
 ## Install node
@@ -55,3 +54,8 @@ The following tasks automate your development:
 ### Launches browser
 
 	gulp launch
+
+##TODO:
+
+* Add SASS
+* Add github tasks
