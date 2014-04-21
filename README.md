@@ -1,7 +1,7 @@
 GV Boilerplate
 ===
 
-A fast and easy way to start your next project
+A boilerplate for creating web-apps.
 
 ## Install node
 

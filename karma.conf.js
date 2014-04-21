@@ -3,8 +3,8 @@ module.exports = function(config) {
     basePath: '../..',
     frameworks: ['jasmine'],
     files:[
-    	'smoking-carrots/src/js/*.js',
-    	'smoking-carrots/test/unit/*.spec.js'
+    	'/src/js/*.js',
+    	'/test/unit/*.spec.js'
     ],
     reporters: ['progress'],
     colors: true,
