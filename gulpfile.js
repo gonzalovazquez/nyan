@@ -8,6 +8,8 @@ var livereload = require('gulp-livereload');
 var open = require('open');
 var minifyCSS = require('gulp-minify-css');
 var imagemin = require('gulp-imagemin');
+var colors = require('colors');
+var gutil = require('gulp-util');
 
 var testFiles = [
 	'src/scripts/*.js',
@@ -15,7 +17,7 @@ var testFiles = [
 	], 
 	dest = 'src',
 	serverAddress = 'localhost:',
-	port = 80,
+	port = 8090,
 	imageFiles = ['scr/image.png'];
 
 // Lint JS
@@ -64,6 +66,19 @@ gulp.task('test', function() {
 		});
 });
 
+gulp.task('test-watch', function() {
+	// Be sure to return the stream
+	return gulp.src(testFiles)
+		.pipe(karma({
+			configFile: 'karma.conf.js',
+			action: 'watch'
+		}))
+		.on('error', function(err) {
+			// Make sure failed tests cause gulp to exit non-zero
+			throw err;
+		});
+});
+
 //Watch
 /*
 Change sublime livereload default port to : 35750
@@ -78,7 +93,7 @@ gulp.task('watch', ['server','launch'], function() {
 gulp.task('server', function(next) {
 	var connect = require('connect'),
 			server = connect();
-	server.use(connect.static(dest)).listen(process.env.PORT || 80, next);
+	server.use(connect.static(dest)).listen(port, next);
 });
 
 gulp.task('launch', function(){
@@ -89,4 +104,7 @@ gulp.task('launch', function(){
 gulp.task('default', ['watch']);
 
 //Build
-gulp.task('ship', ['lint', 'test', 'minify-js', 'minify-css', 'minify-img']);
+gulp.task('ship', ['lint', 'test', 'minify-js', 'minify-css', 'minify-img'], function(){
+	gutil.log('You are ready to ship!!!'.random);
+	gutil.beep();
+});
