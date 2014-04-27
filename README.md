@@ -31,6 +31,10 @@ The following tasks automate your development:
 
 	gulp test
 
+### Converts SASS to CSS
+
+	gulp sass
+
 ### Minifies CSS and moves to <dest> folder
 
 	gulp minify-css
@@ -57,5 +61,4 @@ The following tasks automate your development:
 
 ##TODO:
 
-* Add SASS
 * Add github tasks

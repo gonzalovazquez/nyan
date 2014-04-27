@@ -10,6 +10,7 @@ var minifyCSS = require('gulp-minify-css');
 var imagemin = require('gulp-imagemin');
 var colors = require('colors');
 var gutil = require('gulp-util');
+var sass = require('gulp-sass');
 
 var testFiles = [
 	'src/scripts/*.js',
@@ -22,9 +23,9 @@ var testFiles = [
 
 // Lint JS
 gulp.task("lint", function() {
-		gulp.src("./src/scripts/*.js")
-				.pipe(jshint())
-				.pipe(jshint.reporter("default"));
+	gulp.src("./src/scripts/*.js")
+		.pipe(jshint())
+		.pipe(jshint.reporter("default"));
 });
 
 // Concat & Minify JS
@@ -37,6 +38,13 @@ gulp.task('minify-js', function(){
 		.pipe(gulp.dest('dist'));
 });
 
+// SASS to CSS
+gulp.task('sass', function () {
+    gulp.src('src/styles/*.scss')
+        .pipe(sass())
+        .pipe(gulp.dest('src/styles'));
+});
+
 // Concat & Minify JS
 gulp.task('minify-css', function() {
 	gulp.src('src/styles/*.css')
@@ -47,9 +55,9 @@ gulp.task('minify-css', function() {
 
 //Minify Images
 gulp.task('minify-img', function () {
-		gulp.src(imageFiles)
-				.pipe(imagemin())
-				.pipe(gulp.dest('dist'));
+	gulp.src(imageFiles)
+		.pipe(imagemin())
+		.pipe(gulp.dest('dist'));
 });
 
 //Test
@@ -92,7 +100,7 @@ gulp.task('watch', ['server','launch'], function() {
 
 gulp.task('server', function(next) {
 	var connect = require('connect'),
-			server = connect();
+		server = connect();
 	server.use(connect.static(dest)).listen(port, next);
 });
 
