@@ -10,7 +10,7 @@ A boilerplate for creating kickass web-apps.
 
 ## Install node
 
-	[Node](http://nodejs.org/)
+[Node](http://nodejs.org/)
 
 ## After installing node, install Gulp globally
 
