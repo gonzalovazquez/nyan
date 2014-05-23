@@ -11,108 +11,147 @@ var imagemin = require('gulp-imagemin');
 var colors = require('colors');
 var gutil = require('gulp-util');
 var sass = require('gulp-sass');
+var inject = require("gulp-inject");
+var clean = require('gulp-clean');
+var sequence = require('run-sequence');
+var stylish = require('jshint-stylish');
+var pkg = require('./package.json');
 
-var testFiles = [
-	'src/scripts/*.js',
-	'test/unit/*spec.js'
-	], 
-	dest = 'src',
-	serverAddress = 'localhost:',
-	port = 8090,
-	imageFiles = ['scr/image.png'];
+var serverAddress = 'localhost:', port = 8090;
 
-// Lint JS
-gulp.task("lint", function() {
-	gulp.src("./src/scripts/*.js")
-		.pipe(jshint())
-		.pipe(jshint.reporter("default"));
-});
+var paths = {
+		public: {
+			src: 'src',
+			index: 'src/index.html',
+			dest: 'public'
+		},
+		scripts: {
+			src:  'src/scripts/**/*.js',
+			vendor: 'src/scripts/vendor/*js',
+			dest: 'public/javascript'
+		},
+		styles: {
+			src:  'src/styles/*.scss',
+			dest: 'public/css'
+		},
+		images: {
+			src: 'src/images/*.png',
+			dest: 'public/images'
+		},
+		test: {
+			src : ['src/scripts/*.js','test/unit/*spec.js']
+		}
+};
 
 // Concat & Minify JS
 gulp.task('minify-js', function(){
-	return gulp.src('src/scripts/*.js')
-		.pipe(concat('all.js'))
-		.pipe(gulp.dest('dist'))
-		.pipe(rename('all.min.js'))
+	return gulp.src(paths.scripts.src)
+		.pipe(concat('all-'+ pkg.version + '.min.js'))
+		.pipe(gulp.dest(paths.scripts.dest))
 		.pipe(uglify())
-		.pipe(gulp.dest('dist'));
+		.pipe(gulp.dest(paths.scripts.dest));
 });
 
 // SASS to CSS
 gulp.task('sass', function () {
-    gulp.src('src/styles/*.scss')
-        .pipe(sass())
-        .pipe(gulp.dest('src/styles'));
-});
-
-// Concat & Minify JS
-gulp.task('minify-css', function() {
-	gulp.src('src/styles/*.css')
-		.pipe(concat('style.min.css'))
-		.pipe(minifyCSS(opts))
-		.pipe(gulp.dest('dist'))
+	return gulp.src(paths.styles.src)
+	.pipe(sass({
+			onError: function (error) {
+			gutil.log(gutil.colors.red(error));
+			gutil.beep();
+		},
+		onSuccess: function () {
+			gutil.log(gutil.colors.green('Sass styles compiled successfully.'));
+		}
+	}))
+	.pipe(concat('main-' + pkg.version + '.min.css'))
+	.pipe(minifyCSS())
+	.pipe(gulp.dest(paths.styles.dest))
 });
 
 //Minify Images
 gulp.task('minify-img', function () {
-	gulp.src(imageFiles)
+	gulp.src(paths.images.src)
 		.pipe(imagemin())
-		.pipe(gulp.dest('dist'));
+		.pipe(gulp.dest(paths.images.dest));
+});
+
+// Build HTML files
+gulp.task('build-html', function() {
+	gulp.src([paths.scripts.dest + '/*.js', paths.styles.dest + '/*.css'], {read: false})
+		.pipe(inject(paths.public.index, {ignorePath: paths.public.dest}))
+		.pipe(gulp.dest(paths.public.dest))
+});
+
+
+// Lint JS
+gulp.task("lint", function() {
+	gulp.src([paths.scripts.src, '!'+ paths.scripts.vendor])
+		.pipe(jshint())
+		.pipe(jshint.reporter(stylish));
 });
 
 //Test
 gulp.task('test', function() {
-	// Be sure to return the stream
-	return gulp.src(testFiles)
+	return gulp.src(paths.test.src)
 		.pipe(karma({
 			configFile: 'karma.conf.js',
 			action: 'run'
 		}))
 		.on('error', function(err) {
-			// Make sure failed tests cause gulp to exit non-zero
 			throw err;
 		});
 });
 
 gulp.task('test-watch', function() {
-	// Be sure to return the stream
-	return gulp.src(testFiles)
+	return gulp.src(paths.test.src)
 		.pipe(karma({
 			configFile: 'karma.conf.js',
 			action: 'watch'
 		}))
 		.on('error', function(err) {
-			// Make sure failed tests cause gulp to exit non-zero
 			throw err;
 		});
 });
 
-//Watch
-/*
-Change sublime livereload default port to : 35750
+/* 
+ * Watch
+ * Open Sublime before running this task
 */
-gulp.task('watch', ['server','launch'], function() {
+gulp.task('watch', ['build','server','launch'], function() {
 	var server = livereload();
-	gulp.watch(dest + '/**', ['lint']).on('change', function(file) {
+	gulp.watch(paths.public.src + '/**', ['lint']).on('change', function(file) {
 			server.changed(file.path);
 	});
+	gulp.watch([paths.public.index], ['build-html']);
+	gulp.watch([paths.scripts.src], ['minify-js']);
+	gulp.watch([paths.styles.src], ['sass']);
 });
 
 gulp.task('server', function(next) {
 	var connect = require('connect'),
 		server = connect();
-	server.use(connect.static(dest)).listen(port, next);
+	server.use(connect.static(paths.public.dest)).listen(port, next);
 });
 
 gulp.task('launch', function(){
 	open('http://' + serverAddress + port);
 });
 
-// Default
-gulp.task('default', ['watch']);
-
 //Build
-gulp.task('ship', ['lint', 'test', 'minify-js', 'minify-css', 'minify-img'], function(){
-	gutil.log('You are ready to ship!!!'.random);
-	gutil.beep();
+gulp.task('build', function(callback) {
+	sequence(
+		'clean',
+		['minify-js','sass'],
+		'build-html',
+		callback);
 });
+
+// Clean build folder
+gulp.task('clean', function () {
+	return gulp.src(paths.public.dest, {read: false})
+		.pipe(clean());
+});
+
+// Default
+gulp.task('default', ['build']);

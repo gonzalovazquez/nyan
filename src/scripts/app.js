@@ -1,4 +1,4 @@
 function addTwoNumber (a,b) {
-	console.log('Welcome to GV Boilerplate');
+	console.log('Nyan says nanana!');
 	return a + b;
 }

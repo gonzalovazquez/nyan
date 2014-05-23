@@ -1,8 +1,9 @@
 {
-  "name": "project-name",
-  "version": "0.1.1",
+  "name": "nyan",
+  "version": "0.1.2",
   "author": "Gonzalo Vazquez",
-  "description": "A boilerplate for creating web-apps",
+  "description": "A boilerplate for creating kickass web-apps",
+  "private": true,
   "contributors": [
     {
       "name": "Gonzalo Vazquez",
@@ -11,7 +12,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/gonzalovazquez/boilerplate.git"
+    "url": "https://github.com/gonzalovazquez/nyan.git"
   },
   "devDependencies": {
     "gulp": "^3.6.1",
@@ -32,6 +33,10 @@
     "gulp-imagemin": "^0.2.0",
     "colors": "^0.6.2",
     "gulp-util": "^2.2.14",
-    "gulp-sass": "^0.7.1"
+    "gulp-sass": "^0.7.1",
+    "gulp-inject": "^0.4.1",
+    "gulp-clean": "^0.2.4",
+    "run-sequence": "^0.3.6",
+    "jshint-stylish": "^0.2.0"
   }
 }

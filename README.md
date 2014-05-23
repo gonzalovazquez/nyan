@@ -1,12 +1,18 @@
-GV Boilerplate
+Nyan
 ===
-A boilerplate for creating web-apps.
+<p align="center">
+  <a href="http://gulpjs.com">
+    <img height="194" width="320" src="http://img2.wikia.nocookie.net/__cb20120317044335/nine/images/thumb/d/dc/Nyancat.png/320px-Nyancat.png"/>
+  </a>
+</p>
+
+A boilerplate for creating kickass web-apps.
 
 ## Install node
 
-	You can install it [here](http://nodejs.org/)
+	[Node](http://nodejs.org/)
 
-## After installing node, install Gulp
+## After installing node, install Gulp globally
 
 	npm install gulp -g
 
@@ -15,49 +21,132 @@ A boilerplate for creating web-apps.
 	npm install
 
 
-## Workflow
+## `gulpfile.js`
 
-The following tasks automate your development:
+This file is just a quick sample to give you a taste of what Nyan can do.
 
-### Launches a server, watches changes in code and lints JavaScript files.
+```javascript
 
-	gulp watch
+// Concat & Minify JS
+gulp.task('minify-js', function(){
+	return gulp.src(paths.scripts.src)
+		.pipe(concat('all-'+ pkg.version + '.min.js'))
+		.pipe(gulp.dest(paths.scripts.dest))
+		.pipe(uglify())
+		.pipe(gulp.dest(paths.scripts.dest));
+});
 
-### Runs unit test, minifies js and css, optimizes images and moves them to <dest> folder. 
+// SASS to CSS
+gulp.task('sass', function () {
+	return gulp.src(paths.styles.src)
+	.pipe(sass({
+			onError: function (error) {
+			gutil.log(gutil.colors.red(error));
+			gutil.beep();
+		},
+		onSuccess: function () {
+			gutil.log(gutil.colors.green('Sass styles compiled successfully.'));
+		}
+	}))
+	.pipe(concat('main-' + pkg.version + '.min.css'))
+	.pipe(minifyCSS())
+	.pipe(gulp.dest(paths.styles.dest))
+});
 
-	gulp ship
+// Minify Images
+gulp.task('minify-img', function () {
+	gulp.src(paths.images.src)
+		.pipe(imagemin())
+		.pipe(gulp.dest(paths.images.dest));
+});
 
-### Runs unit tests using karma runner and jasmine framework
+// Build HTML files
+gulp.task('build-html', function() {
+	gulp.src([paths.scripts.dest + '/*.js', paths.styles.dest + '/*.css'], {read: false})
+		.pipe(inject(paths.public.index, {ignorePath: paths.public.dest}))
+		.pipe(gulp.dest(paths.public.dest))
+});
 
-	gulp test
+// Lint JS
+gulp.task("lint", function() {
+	gulp.src([paths.scripts.src, '!'+ paths.scripts.vendor])
+		.pipe(jshint())
+		.pipe(jshint.reporter(stylish));
+});
 
-### Converts SASS to CSS
+// Test
+gulp.task('test-watch', function() {
+	return gulp.src(paths.test.src)
+		.pipe(karma({
+			configFile: 'karma.conf.js',
+			action: 'watch'
+		}))
+		.on('error', function(err) {
+			throw err;
+		});
+});
 
-	gulp sass
+// Watches changes
+gulp.task('watch', ['build','server','launch'], function() {
+	var server = livereload();
+	gulp.watch(paths.public.src + '/**', ['lint']).on('change', function(file) {
+			server.changed(file.path);
+	});
+	gulp.watch([paths.public.index], ['build-html']);
+	gulp.watch([paths.scripts.src], ['minify-js']);
+	gulp.watch([paths.styles.src], ['sass']);
+});
 
-### Minifies CSS and moves to <dest> folder
+// Builds
+gulp.task('build', function(callback) {
+	sequence(
+		'clean',
+		['minify-js','sass'],
+		'build-html',
+		callback);
+});
 
-	gulp minify-css
+// Clean build folder
+gulp.task('clean', function () {
+	return gulp.src(paths.public.dest, {read: false})
+		.pipe(clean());
+});
 
-### Minifies JS and moves to <dest> folder
-	
-	gulp minify-js
+```
 
-### Optimizes Images
+###Folder structure
 
-	gulp minify-img
+```
+src/
+├── images/
+│ 
+├── scripts/
+│   ├── app.js
+│   └── vendor/
+│       └─google-analytics.js
+├── styles/
+│   └── main.scss
+│
+└── index.html
+```
 
-### Lints JS using JSLint
+After running ``` gulp build ``` public folder is created and Nyan injects
+all the scripts and styles into the new index.html
 
-	gulp lint
+```
+public/
+├── images/
+│ 
+├── javascript/
+│   └── all.[version-number].min.js
+│ 
+├── css/
+│   └── main.[version-number].min.css
+│
+└── index.html
+```
 
-### Creates server
-
-	gulp server
-
-### Launches browser
-
-	gulp launch
+You can find more information about Nyan on my [blog post](http://blog.gonzalovazquez.ca/setting-up-your-automated-workflow-using-gulp/)
 
 ##TODO:
 
