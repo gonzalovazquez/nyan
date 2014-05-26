@@ -16,8 +16,9 @@ var clean = require('gulp-clean');
 var sequence = require('run-sequence');
 var stylish = require('jshint-stylish');
 var pkg = require('./package.json');
+var gulpif = require('gulp-if');
 
-var serverAddress = 'localhost:', port = 8090;
+var serverAddress = 'localhost:', port = 8090, isProduction = true;
 
 var paths = {
 		public: {
@@ -48,7 +49,7 @@ gulp.task('minify-js', function(){
 	return gulp.src([paths.scripts.vendor, paths.scripts.src])
 		.pipe(concat('all-'+ pkg.version + '.min.js'))
 		.pipe(gulp.dest(paths.scripts.dest))
-		.pipe(uglify())
+		.pipe(gulpif(isProduction, uglify()))
 		.pipe(gulp.dest(paths.scripts.dest));
 });
 
@@ -65,7 +66,7 @@ gulp.task('sass', function () {
 		}
 	}))
 	.pipe(concat('main-' + pkg.version + '.min.css'))
-	.pipe(minifyCSS())
+	.pipe(gulpif(isProduction, minifyCSS()))
 	.pipe(gulp.dest(paths.styles.dest))
 });
 
