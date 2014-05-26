@@ -127,7 +127,12 @@ src/
 ├── styles/
 │   └── main.scss
 │
-└── index.html
+├── index.html
+│
+└── test/
+    └── unit/
+        └── app.spec.js
+
 ```
 
 After running ``` gulp build ``` public folder is created and Nyan injects
