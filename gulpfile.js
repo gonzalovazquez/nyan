@@ -31,7 +31,7 @@ var paths = {
 			dest: 'public/javascript'
 		},
 		styles: {
-			src:  'src/styles/*.scss',
+			src:  ['src/styles/*.scss','src/styles/*.css'],
 			dest: 'public/css'
 		},
 		images: {
