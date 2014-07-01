@@ -19,7 +19,6 @@
 *.rar
 *.tar
 *.zip
-*.sass_cache
 *node_modules
 *public
  
@@ -38,3 +37,8 @@
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# SASS #
+######################
+**/.sass-cache
+**/.sass-cache/*
