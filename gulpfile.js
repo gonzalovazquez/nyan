@@ -10,7 +10,7 @@ var minifyCSS = require('gulp-minify-css');
 var imagemin = require('gulp-imagemin');
 var colors = require('colors');
 var gutil = require('gulp-util');
-var sass = require('gulp-sass');
+var sass = require('gulp-ruby-sass');
 var inject = require("gulp-inject");
 var clean = require('gulp-clean');
 var sequence = require('run-sequence');
@@ -32,7 +32,7 @@ var paths = {
 			dest: 'public/javascript'
 		},
 		styles: {
-			src:  ['src/styles/*.scss','src/styles/*.css'],
+			src:  ['src/styles/*.scss','src/styles/*.css', 'src/styles/*.sass' ],
 			dest: 'public/css'
 		},
 		images: {
