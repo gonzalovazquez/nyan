@@ -19,6 +19,7 @@
 *.rar
 *.tar
 *.zip
+*.sass_cache
 *node_modules
 *public
  
