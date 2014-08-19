@@ -84,6 +84,11 @@ gulp.task('build-html', function() {
 		.pipe(gulp.dest(paths.public.dest))
 });
 
+//Move bower_components to public
+gulp.task('move', function(){
+  gulp.src('bower_components/**', { base: './' })
+  .pipe(gulp.dest(paths.public.dest));
+});
 
 // Lint JS
 gulp.task("lint", function() {
@@ -145,6 +150,7 @@ gulp.task('build', function(callback) {
 		'clean',
 		['minify-js','sass'],
 		'build-html',
+		'move',
 		callback);
 });
 
