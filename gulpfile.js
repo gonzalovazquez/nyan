@@ -62,12 +62,6 @@ gulp.task('build-html', function() {
 		.pipe(gulp.dest(files.publicDir))
 });
 
-//Move bower_components to public
-gulp.task('move', function(){
-  gulp.src('bower_components/**', { base: './' })
-  .pipe(gulp.dest(files.publicDir));
-});
-
 // Lint JS
 gulp.task("lint", function() {
 	gulp.src([files.scripts, '!'+ files.vendor])
@@ -122,13 +116,33 @@ gulp.task('launch', function(){
 	open('http://' + serverAddress + port);
 });
 
+//Move bower_components to public
+gulp.task('bower_components', function(){
+	gulp.src(files.libs, { base: './' })
+		.pipe(gulp.dest(files.publicDir));
+});
+
+//Move views to public folder
+gulp.task('views', function(){
+	return gulp.src(files.views)
+		.pipe(gulp.dest('public/views'));
+});
+
+//Move templates to public folder
+gulp.task('templates', function(){
+	return gulp.src(files.templates)
+		.pipe(gulp.dest('public/templates'));
+});
+
 //Build
 gulp.task('build', function(callback) {
 	sequence(
 		'clean',
 		['minify-js','sass'],
 		'build-html',
-		'move',
+		'bower_components',
+		'views',
+		'templates',
 		callback);
 });
 
